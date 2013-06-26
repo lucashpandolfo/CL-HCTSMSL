@@ -20,11 +20,11 @@ HTML
 
 HTML expressions use this syntax:
 ```lisp
-(html (<:tag (:attribute "value" :id "some-id" and so on) some arguments))
+(html (<:tag '(:attribute "value" :id "some-id" and so on) some arguments))
 ```
 or
 ```lisp
-(html (<:tag some arguments))
+(html '(<:tag some arguments))
 ```
 Both variants are syntactically correct.
 
@@ -55,15 +55,15 @@ It also supports comments and doctype
 
 It even supports every HTML tag attribute!
 ```lisp
-(html (<:div (:class "red") "Hello, World!")) =>
+(html (<:div '(:class "red") "Hello, World!")) =>
 "<div class=\"red\"
     Hello, World!
 </div>"
 
-(html (<:h1 (:id "title" :class "title") "TITLE")) =>
+(html (<:h1 '(:id "title" :class "title") "TITLE")) =>
 "<h1 id=\"title\" class=\"title\">TITLE</h1>"
 
-(html (<:h1 (:lol "value") "TEST")) =>
+(html (<:h1 '(:lol "value") "TEST")) =>
 "<h1 lol=\"value\">TEST</h1>"
 ```
 

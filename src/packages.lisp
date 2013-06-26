@@ -8,9 +8,10 @@
            :make-css-form
            :css)) 
 
-(defpackage :html-tags
-  (:nicknames :<)
-  (:use :cl
-        :cl-hctsmsl)
-  (:export :comment
-           :doctype))
+(unless (find-package :html-tags)
+  (defpackage :html-tags
+    (:nicknames :<)
+    (:use :cl)
+    (:import-from :cl-hctsmsl :define-html-tag)
+    (:export :comment
+             :doctype)))
