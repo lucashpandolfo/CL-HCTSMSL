@@ -23,11 +23,11 @@
             name)))
 
 (defun parameters-form-p (form)
-  (and (listp form) (not (eql (first form) :html))))
+  (and (listp form) (not (eql (first form) :html-form))))
 
 (defun make-raw-html-form (tag parameters content &optional (force-formatting-mode :auto))
   "Formatting mode can be either :auto (decides which representation to choose based on content), :inline (forces translator to use inline mod) or :block (forces translator to use block mode). If other value supplied, it generates an error."
-  (append (list :html)
+  (append (list :html-form)
           (list force-formatting-mode)
           (list (make-opening-tag tag (when (parameters-form-p parameters)
                                         parameters)))

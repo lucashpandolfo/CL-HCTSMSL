@@ -3,8 +3,10 @@
         :fiveam
         :alexandria)
   (:export :define-html-tag
+           :make-html-form
+           :html
            :make-css-form
-           :css-form)) 
+           :css)) 
 
 (defpackage :html-tags
   (:nicknames :<)
