@@ -40,6 +40,10 @@
 (define-html-tag head :block)
 (define-html-tag body :block)
 
+(define-html-tag dl :block)
+(define-html-tag dd)
+(define-html-tag dt)
+
 (define-html-tag script)
 (define-html-tag iframe)
 
