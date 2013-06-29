@@ -22,27 +22,27 @@
     (format nil "</~A>"
             name)))
 
-(defun parameters-form-p (form)
-  (and (listp form) (not (eql (first form) :html-form))))
-
 (defun make-raw-html-form (tag parameters content &optional (force-formatting-mode :auto))
   "Formatting mode can be either :auto (decides which representation to choose based on content), :inline (forces translator to use inline mod) or :block (forces translator to use block mode). If other value supplied, it generates an error."
-  (append (list :html-form)
-          (list force-formatting-mode)
-          (list (make-opening-tag tag (when (parameters-form-p parameters)
-                                        parameters)))
-          (list (make-closing-tag tag))
-          (if (parameters-form-p parameters) content (cons parameters content))))
+  (let ((prepared-content content))
+    (append (list force-formatting-mode)
+            (list (make-opening-tag tag parameters))
+            (list (make-closing-tag tag))
+            content)))
 
 (defun make-html-form (form)
   (with-output-to-string (stream)
     (labels
-        ((write-with-indent (string size)
-           (princ (indent-string size string)
+        ((translate-to-string (value)
+           (let ((*print-case* :downcase))
+             (format nil "~A" value)))
+
+         (write-with-indent (value size)
+           (princ (indent-string size (translate-to-string value))
                   stream))
 
-         (write-without-indent (string)
-           (princ string
+         (write-without-indent (value)
+           (princ (translate-to-string value)
                   stream))
 
          (write-inline (tag closing-tag content indentation-level)
@@ -72,8 +72,7 @@
          (walk-tree (expression &optional (indentation-level 0))
            (if (not (listp expression))
                (write-with-indent expression indentation-level)
-               (destructuring-bind (form-type formatting-mode tag closing-tag . content) expression
-                 (declare (ignore form-type))
+               (destructuring-bind (formatting-mode tag closing-tag . content) expression
                  (if (not content)
                      (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
                      (case formatting-mode
@@ -90,8 +89,10 @@
           :key (compose (curry #'format nil "~A~%") #'make-html-form)))
 
 (defmacro define-html-tag (name &optional forced-mode)
-  `(progn (defun ,(intern (symbol-name name) (find-package :html-tags)) (parameters &rest forms)
-            (make-raw-html-form ',name parameters forms
+  `(progn (defun ,(intern (symbol-name name) (find-package :html-tags)) (&rest forms)
+            (make-raw-html-form ',name
+                                (if (listp (first forms)) (first forms))
+                                (if (listp (first forms)) (rest forms) forms)
                                 ,(if forced-mode
                                      forced-mode
                                      :auto)))
