@@ -14,6 +14,10 @@
   (is (equal (format nil "<div>~%~4T<p>~%~8Ttest~%~8Ttest~%~4T</p>~%~4Thelloworld~%</div>~%")
              (html (<:div (<:p "test" "test") "helloworld")))))
 
+(test list-parameters
+  (is (equal (format nil "<div class=\"a b c\" align=\"left\">~%~4Ttest~%</div>~%")
+             (html (<:div '(:class (:a :b :c) :align :left) "test")))))
+
 (test comment-generation
   (is (equal (format nil "<!-- LOLD SO HARD, MAN -->~%")
              (html (<:comment "LOLD" "SO" "HARD," "MAN")))))

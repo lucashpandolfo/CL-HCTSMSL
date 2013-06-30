@@ -14,8 +14,8 @@
 
 (defun make-opening-tag (name parameters)
   (let ((*print-case* :downcase))
-    (format nil "<~A~{ ~A=\"~A\"~}>"
-            name parameters)))
+    (format nil "<~A~{ ~{~A~}=\"~{~A~^ ~}\"~}>"
+            name (mapcar #'alexandria:ensure-list parameters))))
 
 (defun make-closing-tag (name)
   (let ((*print-case* :downcase))
