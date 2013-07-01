@@ -12,8 +12,11 @@
   :defsystem-depends-on (:alexandria :fiveam)
   :pathname "src"
   :components ((:file "packages")
-               (:file "html"
+               (:file "sanitizing"
                       :depends-on ("packages"))
+               (:file "html"
+                      :depends-on ("sanitizing"
+                                   "packages"))
                (:file "css"
                       :depends-on ("packages"))
                (:file "html-ops"
@@ -24,6 +27,8 @@
   :defsystem-depends-on (:cl-hctsmsl)
   :pathname "tests"
   :components ((:file "suites")
+               (:file "sanitizer-tests"
+                      :depends-on ("suites"))
                (:file "html-tests"
                       :depends-on ("suites"))
                (:file "css-tests"

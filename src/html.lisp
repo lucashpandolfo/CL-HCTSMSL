@@ -80,13 +80,16 @@
                  (write-with-indent expression indentation-level)
                  (destructuring-bind (form-type formatting-mode tag closing-tag . content) expression
                    (declare (ignore form-type))
-                   (if (not content)
-                       (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
-                       (case formatting-mode
-                         (:inline (write-inline tag closing-tag content indentation-level))
-                         (:block  (write-block tag closing-tag content indentation-level))
-                         (:auto   (write-auto tag closing-tag content indentation-level))
-                         (t       (error "Unknown formatting mode: ~S" formatting-mode)))))))))
+                   (let ((content (if (listp content)
+                                      content
+                                      (sanitize content))))
+                     (if (not content)
+                         (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
+                         (case formatting-mode
+                           (:inline (write-inline tag closing-tag content indentation-level))
+                           (:block  (write-block tag closing-tag content indentation-level))
+                           (:auto   (write-auto tag closing-tag content indentation-level))
+                           (t       (error "Unknown formatting mode: ~S" formatting-mode))))))))))
 
       (walk-tree form))))
 
