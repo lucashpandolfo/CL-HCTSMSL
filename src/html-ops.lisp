@@ -10,6 +10,7 @@
 (define-html-tag b)
 (define-html-tag em)
 (define-html-tag pre)
+(define-html-tag label)
 
 (define-html-tag ul)
 (define-html-tag ol)
@@ -40,8 +41,14 @@
 (define-html-tag head :block)
 (define-html-tag body :block)
 
-(define-html-tag script)
+(define-html-tag dl :block)
+(define-html-tag dd)
+(define-html-tag dt)
+
+(define-html-tag script :block)
 (define-html-tag iframe)
+(define-html-tag form)
+(define-html-tag input)
 
 (defun comment (&rest strings)
   (let ((*print-case* :downcase))

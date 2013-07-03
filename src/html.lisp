@@ -22,13 +22,18 @@
     (format nil "</~A>"
             name)))
 
+(defun parameters-form-p (form)
+  (and (listp form) (not (eql (first form) :html-form))))
+
 (defun make-raw-html-form (tag parameters content &optional (force-formatting-mode :auto))
   "Formatting mode can be either :auto (decides which representation to choose based on content), :inline (forces translator to use inline mod) or :block (forces translator to use block mode). If other value supplied, it generates an error."
-  (let ((prepared-content content))
-    (append (list force-formatting-mode)
-            (list (make-opening-tag tag parameters))
-            (list (make-closing-tag tag))
-            content)))
+  (append (list :html-form)
+          (list force-formatting-mode)
+          (list (make-opening-tag tag (when (parameters-form-p parameters) parameters)))
+          (list (make-closing-tag tag))
+          (if (parameters-form-p parameters)
+              content
+              (cons parameters content))))
 
 (defun make-html-form (form)
   (with-output-to-string (stream)
@@ -70,16 +75,21 @@
                (write-inline tag closing-tag content indentation-level)))
 
          (walk-tree (expression &optional (indentation-level 0))
-           (if (not (listp expression))
-               (write-with-indent expression indentation-level)
-               (destructuring-bind (formatting-mode tag closing-tag . content) expression
-                 (if (not content)
-                     (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
-                     (case formatting-mode
-                       (:inline (write-inline tag closing-tag content indentation-level))
-                       (:block  (write-block tag closing-tag content indentation-level))
-                       (:auto   (write-auto tag closing-tag content indentation-level))
-                       (t       (error "Unknown formatting mode: ~S" formatting-mode))))))))
+           (when expression
+             (if (not (listp expression))
+                 (write-with-indent expression indentation-level)
+                 (destructuring-bind (form-type formatting-mode tag closing-tag . content) expression
+                   (declare (ignore form-type))
+                   (let ((content (if (listp content)
+                                      content
+                                      (sanitize content))))
+                     (if (not content)
+                         (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
+                         (case formatting-mode
+                           (:inline (write-inline tag closing-tag content indentation-level))
+                           (:block  (write-block tag closing-tag content indentation-level))
+                           (:auto   (write-auto tag closing-tag content indentation-level))
+                           (t       (error "Unknown formatting mode: ~S" formatting-mode))))))))))
 
       (walk-tree form))))
 
