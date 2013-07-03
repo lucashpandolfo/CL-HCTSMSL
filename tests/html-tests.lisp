@@ -18,6 +18,10 @@
   (is (equal (format nil "<div class=\"a b c\" align=\"left\">~%~4Ttest~%</div>~%")
              (html (<:div '(:class (:a :b :c) :align :left) "test")))))
 
+(test sanitize-contents
+  (is (equal (format nil "<div>~%~4&lt;&gt;&amp;&#92;&quot;~%</div>~%")
+             (html (<:div () "<>&\\\"")))))
+
 (test comment-generation
   (is (equal (format nil "<!-- LOLD SO HARD, MAN -->~%")
              (html (<:comment "LOLD" "SO" "HARD," "MAN")))))
