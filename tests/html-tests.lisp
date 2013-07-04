@@ -22,6 +22,10 @@
   (is (equal (format nil "<div>~%~4T&lt;&gt;&amp;&#92;&quot;~%</div>~%")
              (html (<:div () "<>&\\\"")))))
 
+(test sanitize-contents-multiple-forms
+  (is (equal (format nil "<div>~%~4T&lt;~%~4T&gt;~%~4T&amp;~%</div>~%")
+             (html (<:div () "<" ">" "&")))))
+
 (test comment-generation
   (is (equal (format nil "<!-- LOLD SO HARD, MAN -->~%")
              (html (<:comment "LOLD" "SO" "HARD," "MAN")))))
