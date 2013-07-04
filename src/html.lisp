@@ -55,7 +55,7 @@
            (dolist (form content)
              (if (listp form)
                  (walk-tree form 0)
-                 (write-without-indent form)))
+                 (write-without-indent (sanitize form))))
            (write-without-indent closing-tag))
 
          (write-block (tag closing-tag content indentation-level)
@@ -64,7 +64,7 @@
            (dolist (form content)
              (if (listp form)
                  (walk-tree form (+ indentation-level *indent-size*))
-                 (write-with-indent form (+ indentation-level *indent-size*)))
+                 (write-with-indent (sanitize form) (+ indentation-level *indent-size*)))
              (fresh-line stream))
            (fresh-line stream)
            (write-with-indent closing-tag indentation-level))
@@ -80,16 +80,13 @@
                  (write-with-indent expression indentation-level)
                  (destructuring-bind (form-type formatting-mode tag closing-tag . content) expression
                    (declare (ignore form-type))
-                   (let ((content (if (listp content)
-                                      content
-                                      (sanitize content))))
-                     (if (not content)
-                         (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
-                         (case formatting-mode
-                           (:inline (write-inline tag closing-tag content indentation-level))
-                           (:block  (write-block tag closing-tag content indentation-level))
-                           (:auto   (write-auto tag closing-tag content indentation-level))
-                           (t       (error "Unknown formatting mode: ~S" formatting-mode))))))))))
+                   (if (not content)
+                       (write-with-indent tag (if (eql formatting-mode :inline) 0 indentation-level))
+                       (case formatting-mode
+                         (:inline (write-inline tag closing-tag content indentation-level))
+                         (:block  (write-block tag closing-tag content indentation-level))
+                         (:auto   (write-auto tag closing-tag content indentation-level))
+                         (t       (error "Unknown formatting mode: ~S" formatting-mode)))))))))
 
       (walk-tree form))))
 

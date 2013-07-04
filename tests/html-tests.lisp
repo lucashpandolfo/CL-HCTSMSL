@@ -19,7 +19,7 @@
              (html (<:div '(:class (:a :b :c) :align :left) "test")))))
 
 (test sanitize-contents
-  (is (equal (format nil "<div>~%~4&lt;&gt;&amp;&#92;&quot;~%</div>~%")
+  (is (equal (format nil "<div>~%~4T&lt;&gt;&amp;&#92;&quot;~%</div>~%")
              (html (<:div () "<>&\\\"")))))
 
 (test comment-generation
