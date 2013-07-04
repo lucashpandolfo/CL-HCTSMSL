@@ -20,11 +20,15 @@
 
 (test sanitize-contents
   (is (equal (format nil "<div>~%~4T&lt;&gt;&amp;&#92;&quot;~%</div>~%")
-             (html (<:div () "<>&\\\"")))))
+             (html (<:div "<>&\\\"")))))
 
 (test sanitize-contents-multiple-forms
   (is (equal (format nil "<div>~%~4T&lt;~%~4T&gt;~%~4T&amp;~%</div>~%")
-             (html (<:div () "<" ">" "&")))))
+             (html (<:div "<" ">" "&")))))
+
+(test multilevel-sanitize-contents
+  (is (equal (format nil "<div>~%~4T&lt;~%~4T&gt;~%~4T<p>~%~8T&amp;~%~8T&quot;~%~4T</p>~%</div>~%")
+             (html (<:div "<" ">" (<:p "&" "\""))))))
 
 (test comment-generation
   (is (equal (format nil "<!-- LOLD SO HARD, MAN -->~%")
